@@ -6,12 +6,18 @@ interface HabitListProps {
     id: number;
     name: string;
     category: string;
+    color: string;
     completed: Record<string, boolean>;
     active: boolean;
   }[];
   toggleHabit: (habitId: number, dateKey: string) => void;
   toggleActive: (habitId: number) => void;
-  updateHabit: (habitId: number, name: string, category: string) => void;
+  updateHabit: (
+    habitId: number,
+    name: string,
+    category: string,
+    color: string
+  ) => void;
   deleteHabit: (habitId: number) => void;
   period: string;
   currentDate: Date;
