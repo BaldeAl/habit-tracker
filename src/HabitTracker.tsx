@@ -7,7 +7,19 @@ import HabitStatistics from "./components/HabitStatistics";
 import CalendarComponent from "./components/Calendar";
 import BadgeCustomization from "./components/BadgeCustomization";
 import Notifications, { notify } from "./components/Notifications";
+import NotificationSettings from "./NotificationSettings";
 
+const requestNotificationPermission = () => {
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+};
+
+const showNotification = (title: string, body: string) => {
+  if (Notification.permission === "granted") {
+    new Notification(title, { body });
+  }
+};
 interface Habit {
   id: number;
   name: string;
@@ -15,6 +27,11 @@ interface Habit {
   color: string;
   completed: Record<string, boolean>;
   active: boolean;
+}
+
+interface NotificationPreference {
+  habitId: number;
+  frequency: number;
 }
 
 const HabitTracker: React.FC = () => {
@@ -67,6 +84,65 @@ const HabitTracker: React.FC = () => {
       })
     );
   };
+
+  const [preferences, setPreferences] = useState<NotificationPreference[]>(
+    () => {
+      const savedPreferences = localStorage.getItem("notificationPreferences");
+      return savedPreferences ? JSON.parse(savedPreferences) : [];
+    }
+  );
+
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
+  useEffect(() => {
+    const intervals: NodeJS.Timeout[] = preferences
+      .map((preference) => {
+        const habit = habits.find((habit) => habit.id === preference.habitId);
+        if (habit && habit.active && preference.frequency > 0) {
+          return setInterval(() => {
+            const title = "Habit Reminder";
+            const body = `Don't forget to complete your habit: ${habit.name}`;
+            showNotification(title, body);
+          }, preference.frequency * 1000);
+        }
+        return null;
+      })
+      .filter((interval) => interval !== null) as NodeJS.Timeout[];
+
+    return () => {
+      intervals.forEach((interval) => clearInterval(interval));
+    };
+  }, [habits, preferences]);
+
+  const saveNotificationPreferences = (
+    newPreferences: NotificationPreference[]
+  ) => {
+    setPreferences(newPreferences);
+  };
+
+  // useEffect(() => {
+  //   requestNotificationPermission();
+  // }, []);
+
+  // const sendDesktopNotification = (habitName: string) => {
+  //   const title = "Habit Reminder";
+  //   const body = `Don't forget to complete your habit: ${habitName}`;
+  //   showNotification(title, body);
+  // };
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     habits.forEach((habit) => {
+  //       if (habit.active) {
+  //         sendDesktopNotification(habit.name);
+  //       }
+  //     });
+  //   }, 86400000); // Send notification every 24 hours
+
+  //   return () => clearInterval(interval);
+  // }, [habits]);
 
   const toggleActive = (habitId: number) => {
     setHabits(
@@ -121,6 +197,9 @@ const HabitTracker: React.FC = () => {
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
         />
+      </div>
+
+      <div className="mb-4 p-4 bg-white shadow rounded-lg">
         <PeriodSelector
           period={period}
           setPeriod={handlePeriodChange}
@@ -131,20 +210,24 @@ const HabitTracker: React.FC = () => {
           currentDate={currentDate}
           setCurrentDate={setCurrentDate}
         />
-        <BadgeCustomization
-          badgeColor={badgeColor}
-          setBadgeColor={setBadgeColor}
-        />
-        <AddHabitForm addHabit={addHabit} categories={categories} />
       </div>
       <div className="mb-4 p-4 bg-white shadow rounded-lg">
+        <AddHabitForm addHabit={addHabit} categories={categories} />
+      </div>
+      <div id="statistics" className="mb-4 p-4 bg-white shadow rounded-lg">
         <HabitStatistics
           habits={filteredHabits}
           period={period}
           currentDate={currentDate}
         />
       </div>
-      <div className="mb-4 p-4 bg-white shadow rounded-lg">
+      <div id="badge" className="mb-4 p-4 bg-white shadow rounded-lg">
+        <NotificationSettings
+          habits={habits}
+          saveNotificationPreferences={saveNotificationPreferences}
+        />
+      </div>
+      <div id="habits" className="mb-4 p-4 bg-white shadow rounded-lg">
         <HabitList
           habits={filteredHabits}
           toggleHabit={toggleHabit}

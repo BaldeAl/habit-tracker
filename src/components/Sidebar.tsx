@@ -10,10 +10,13 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ visible }) => {
   return (
     <div
-      className={`fixed top-0 left-0 h-full bg-gray-900 text-white w-64 shadow-md transition-transform transform ${
+      className={`fixed top-0 left-0 h-full bg-gray-900 text-white w-64 shadow-md transition-transform transform z-10 ${
         visible ? "translate-x-0" : "-translate-x-full"
       }`}
     >
+      <div className="p-4">
+        <h2 className="text-2xl font-bold">Menu</h2>
+      </div>
       <ul className="mt-10">
         <li className="relative">
           <Link
@@ -21,35 +24,26 @@ const Sidebar: React.FC<SidebarProps> = ({ visible }) => {
             className="block py-4 px-6 hover:bg-gray-700 flex items-center"
           >
             <FaHome className="mr-2" />
-            Dashboard
+            Home
           </Link>
         </li>
         <li className="relative">
-          <Link
-            to="/habits"
+          <a
+            href="#habits"
             className="block py-4 px-6 hover:bg-gray-700 flex items-center"
           >
             <FaTasks className="mr-2" />
             Habits
-          </Link>
+          </a>
         </li>
         <li className="relative">
-          <Link
-            to="/statistics"
+          <a
+            href="#statistics"
             className="block py-4 px-6 hover:bg-gray-700 flex items-center"
           >
             <FaChartBar className="mr-2" />
             Statistics
-          </Link>
-        </li>
-        <li className="relative">
-          <Link
-            to="/settings"
-            className="block py-4 px-6 hover:bg-gray-700 flex items-center"
-          >
-            <FaCog className="mr-2" />
-            Settings
-          </Link>
+          </a>
         </li>
       </ul>
     </div>

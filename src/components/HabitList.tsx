@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import HabitItem from "./HabitItem";
 
 interface HabitListProps {
@@ -32,6 +32,17 @@ const HabitList: React.FC<HabitListProps> = ({
   period,
   currentDate,
 }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearchChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredHabits = habits.filter((habit) =>
+    habit.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const generateDateKeys = () => {
     const keys = [];
     const date = new Date(currentDate);
@@ -60,18 +71,27 @@ const HabitList: React.FC<HabitListProps> = ({
 
   return (
     <div>
-      {habits.map((habit) => (
-        <HabitItem
-          key={habit.id}
-          habit={habit}
-          toggleHabit={toggleHabit}
-          toggleActive={toggleActive}
-          updateHabit={updateHabit}
-          deleteHabit={deleteHabit}
-          dateKeys={dateKeys}
-          period={period}
-        />
-      ))}
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={handleSearchChange}
+        className=" px-3 border border-blue-500 py-2 text-black rounded-md m-5"
+      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {filteredHabits.map((habit) => (
+          <HabitItem
+            key={habit.id}
+            habit={habit}
+            toggleHabit={toggleHabit}
+            toggleActive={toggleActive}
+            updateHabit={updateHabit}
+            deleteHabit={deleteHabit}
+            dateKeys={dateKeys}
+            period={period}
+          />
+        ))}
+      </div>
     </div>
   );
 };

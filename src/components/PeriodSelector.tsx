@@ -61,10 +61,7 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({
 
   return (
     <div className="mb-4">
-      <button
-        onClick={handlePrev}
-        className="mr-2 p-2 bg-gray-300 rounded-full"
-      >
+      <button onClick={handlePrev} className="mr-2 p-2 bg-gray-300 rounded-lg">
         Prev
       </button>
       <select
@@ -87,13 +84,10 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({
           </option>
         ))}
       </select>
-      <button
-        onClick={handleNext}
-        className="ml-2 p-2 bg-gray-300 rounded-full"
-      >
+      <button onClick={handleNext} className="ml-2 p-2 bg-gray-300 rounded-lg">
         Next
       </button>
-      <div>
+      <div className="m-5 font-bold">
         {period === "Day" && <div>{dayNames[currentDate.getDay()]}</div>}
         {period === "Month" && <div>{monthNames[currentDate.getMonth()]}</div>}
       </div>

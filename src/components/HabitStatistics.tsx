@@ -71,14 +71,16 @@ const HabitStatistics: React.FC<HabitStatisticsProps> = ({
 
   const data = {
     labels: dateKeys,
-    datasets: habits.map((habit) => ({
-      label: habit.name,
-      data: dateKeys.map((dateKey) => (habit.completed[dateKey] ? 1 : 0)),
-      backgroundColor: habit.color,
-      borderColor: habit.color,
-      borderWidth: 1,
-      fill: false,
-    })),
+    datasets: habits
+      .filter((habit) => habit.active)
+      .map((habit) => ({
+        label: habit.name,
+        data: dateKeys.map((dateKey) => (habit.completed[dateKey] ? 1 : 0)),
+        backgroundColor: habit.color,
+        borderColor: habit.color,
+        borderWidth: 1,
+        fill: false,
+      })),
   };
 
   const options = {

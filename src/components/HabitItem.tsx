@@ -7,6 +7,7 @@ import {
   FaToggleOn,
   FaToggleOff,
 } from "react-icons/fa";
+import StyledButton from "./StyledButton";
 
 interface HabitItemProps {
   habit: {
@@ -69,13 +70,18 @@ const HabitItem: React.FC<HabitItemProps> = ({
   const monthNames = getMonthNames();
 
   return (
-    <div className="mb-4 p-4 bg-white shadow rounded-lg transition-transform transform hover:scale-105">
+    <div
+      className={`p-4 bg-white shadow rounded-lg transition-transform transform hover:scale-105 ${
+        !habit.active ? "opacity-50" : ""
+      }`}
+    >
       {isEditing ? (
         <div className="mb-4">
           <label htmlFor="edit-habit-name" className="sr-only">
             Edit Habit Name
           </label>
           <input
+            id="edit-habit-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -86,6 +92,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
             Edit Category
           </label>
           <select
+            id="edit-habit-category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="border p-2 rounded mr-2"
@@ -95,23 +102,25 @@ const HabitItem: React.FC<HabitItemProps> = ({
             <option value="Health">Health</option>
             <option value="Hobby">Hobby</option>
           </select>
-
           <label htmlFor="edit-habit-color" className="sr-only">
             Edit Color
           </label>
           <input
+            id="edit-habit-color"
             type="color"
             value={color}
             onChange={(e) => setColor(e.target.value)}
             className="border p-2 rounded mr-2"
           />
-          <button
-            onClick={handleUpdate}
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
+          <StyledButton onClick={handleUpdate} className="mr-2">
             <FaCheck />
-            Save
-          </button>
+          </StyledButton>
+          <StyledButton
+            onClick={() => setIsEditing(false)}
+            className="bg-red-500 hover:bg-red-600 focus:ring-red-600"
+          >
+            <FaTimes />
+          </StyledButton>
         </div>
       ) : (
         <div>
@@ -120,53 +129,46 @@ const HabitItem: React.FC<HabitItemProps> = ({
             style={{ backgroundColor: habit.color }}
           ></div>
           <h2 className="text-xl font-semibold mb-2">{habit.name}</h2>
-          <div className="flex  space-x-3 mb-2">
+          <div className="flex space-x-1 mb-2">
             {dateKeys.map((dateKey, index) => (
               <div
                 key={dateKey}
                 className={`w-6 h-6 border-2 ${
                   habit.completed[dateKey] ? habit.color : "bg-gray-200"
-                } cursor-pointer`}
+                } cursor-pointer ${!habit.active ? "pointer-events-none" : ""}`}
                 onClick={() => toggleHabit(habit.id, dateKey)}
-              >
-                {period === "Week"
-                  ? dayNames[index]
-                  : period === "Month"
-                  ? new Date(dateKey).getDate()
-                  : ""}
-              </div>
+                title={
+                  period === "Week"
+                    ? dayNames[index]
+                    : period === "Month"
+                    ? new Date(dateKey).getDate().toString()
+                    : ""
+                }
+              />
             ))}
           </div>
-          <button
-            className={`mt-2 p-2 ${
-              habit.active ? "bg-red-500" : "bg-green-500"
-            } text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-600`}
+          <StyledButton
             onClick={() => toggleActive(habit.id)}
+            className={`mt-2 ${
+              habit.active
+                ? "bg-red-500 hover:bg-red-600 focus:ring-red-600"
+                : "bg-green-500 hover:bg-green-600 focus:ring-green-600"
+            }`}
           >
-            {habit.active ? (
-              <div className="flex ">
-                Deactivate <FaToggleOff />
-              </div>
-            ) : (
-              <span className="flex">
-                Activate <FaToggleOn />
-              </span>
-            )}
-          </button>
-          <button
+            {habit.active ? <FaToggleOff /> : <FaToggleOn />}
+          </StyledButton>
+          <StyledButton
             onClick={() => setIsEditing(true)}
-            className="mt-2 p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-600"
+            className="mt-2 bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-600"
           >
             <FaEdit />
-            Edit
-          </button>
-          <button
+          </StyledButton>
+          <StyledButton
             onClick={() => deleteHabit(habit.id)}
-            className="mt-2 p-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-600"
+            className="mt-2 bg-red-500 hover:bg-red-600 focus:ring-red-600"
           >
             <FaTrashAlt />
-            Delete
-          </button>
+          </StyledButton>
         </div>
       )}
     </div>

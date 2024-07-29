@@ -18,6 +18,13 @@ const BadgeCustomization: React.FC<BadgeCustomizationProps> = ({
         onChange={(e) => setBadgeColor(e.target.value)}
         className="border p-2 rounded mr-2"
       />
+      <div
+        style={{
+          background: badgeColor,
+          width: "50px",
+          height: "50px",
+        }}
+      />
     </div>
   );
 };

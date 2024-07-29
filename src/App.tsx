@@ -23,7 +23,7 @@ const App: React.FC = () => {
             sidebarVisible ? "ml-64" : "ml-0"
           }`}
         >
-          <header className="p-4 bg-gray-800 text-white flex justify-between items-center">
+          <header className="p-4 bg-gray-800 text-white flex justify-between items-center  z-12">
             <button
               onClick={toggleSidebar}
               className="text-white focus:outline-none"

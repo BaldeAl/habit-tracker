@@ -59,8 +59,9 @@ const AddHabitForm: React.FC<AddHabitFormProps> = ({
         type="color"
         value={color}
         onChange={(e) => setColor(e.target.value)}
-        className="border p-2 rounded mr-2"
+        className="border p-1 rounded mr-2"
       />
+
       <button type="submit" className="bg-blue-500 text-white p-2 rounded">
         Add Habit
       </button>
