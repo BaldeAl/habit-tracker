@@ -1,72 +1,25 @@
-import React, { useState } from "react";
+import React, { useId, useState } from 'react';
+import { categories, categoryLabel } from '../domain/habits';
 
-interface AddHabitFormProps {
-  addHabit: (name: string, category: string, color: string) => void;
-  categories: string[];
+interface Props {
+  initial?: { name: string; category: string };
+  onSave: (name: string, category: string) => boolean;
+  onCancel?: () => void;
 }
 
-const AddHabitForm: React.FC<AddHabitFormProps> = ({
-  addHabit,
-  categories,
-}) => {
-  const [name, setName] = useState("");
-  const [category, setCategory] = useState(categories[0]);
-  const [color, setColor] = useState("#00ff00"); // Default color
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (name.trim()) {
-      addHabit(name, category, color);
-      setName("");
-      setCategory(categories[0]);
-      setColor("#00ff00");
-    }
+export default function AddHabitForm({ initial, onSave, onCancel }: Props) {
+  const [name, setName] = useState(initial?.name || '');
+  const [category, setCategory] = useState(initial?.category || 'Health');
+  const [error, setError] = useState('');
+  const id = useId();
+  const submit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!name.trim()) { setError('Saisissez un nom pour cette habitude.'); return; }
+    if (onSave(name.trim(), category) && !initial) { setName(''); setError(''); }
   };
-
-  return (
-    <form onSubmit={handleSubmit} className="mb-4" aria-label="Add new habit">
-      <label htmlFor="habit-name" className="sr-only">
-        Habit Name
-      </label>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Enter habit name"
-        className="border p-2 rounded mr-2"
-        aria-required="true"
-      />
-      <label htmlFor="habit-category" className="sr-only">
-        Category
-      </label>
-      <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        className="border p-2 rounded mr-2"
-        aria-required="true"
-      >
-        {categories.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
-          </option>
-        ))}
-      </select>
-
-      <label htmlFor="habit-color" className="sr-only">
-        Color
-      </label>
-      <input
-        type="color"
-        value={color}
-        onChange={(e) => setColor(e.target.value)}
-        className="border p-1 rounded mr-2"
-      />
-
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-        Add Habit
-      </button>
-    </form>
-  );
-};
-
-export default AddHabitForm;
+  return <form className="habit-form" onSubmit={submit} noValidate>
+    <div className="field grow"><label htmlFor={`${id}-name`}>Nom de l’habitude</label><input id={`${id}-name`} value={name} maxLength={80} placeholder="Ex. Lire 20 minutes" onChange={event => { setName(event.target.value); setError(''); }} aria-invalid={!!error} aria-describedby={error ? `${id}-error` : undefined} autoFocus={!!initial} />{error && <span className="error" id={`${id}-error`} role="alert">{error}</span>}</div>
+    <div className="field"><label htmlFor={`${id}-category`}>Catégorie</label><select id={`${id}-category`} value={category} onChange={event => setCategory(event.target.value)}>{Array.from(new Set([...categories, category])).map(value => <option key={value} value={value}>{categoryLabel(value)}</option>)}</select></div>
+    <button className="primary" type="submit">{initial ? 'Enregistrer' : 'Ajouter'}</button>{onCancel && <button type="button" onClick={onCancel}>Annuler</button>}
+  </form>;
+}

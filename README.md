@@ -1,39 +1,39 @@
-# 🕒 Habit Tracker
+# Habit Tracker
 
-Application moderne de **suivi d'habitudes ** construite avec **React (CRA) + TypeScript**, **Tailwind CSS** et **Capacitor** pour le packaging mobile.  
-Suivi quotidien, **calendrier interactif**, **statistiques Chart.js**, notifications et personnalisation (badges, catégories).
+Application de suivi d’habitudes en français, construite avec React 18, TypeScript et Create React App. Les données sont conservées dans le navigateur, sans compte ni backend.
 
----
+## Développement
 
-## ✨ Fonctionnalités
+Node 24.19.0 et npm 11.9.0 ont été vérifiés dans l’environnement cloud.
 
-- ✅ CRUD des habitudes (ajout, édition, suppression)
-- 📅 Vue **Calendrier** (react-calendar)
-- 📊 **Statistiques** (Chart.js + react-chartjs-2)
-- 🏆 **Badges** & catégories
-- 🔔 **Notifications** (react-toastify)
-- 🎯 Filtres par période (jour / semaine / mois)
-- 🧭 Navigation client (react-router-dom)
-- 🎨 UI **Tailwind CSS**
+```sh
+npm ci
+npm start
+```
 
----
+## Validation
 
-## 🧠 Stack & dépendances clés
+```sh
+npm run build
+npx tsc --noEmit
+npx eslint src --max-warnings 0
+CI=true npm test -- --watchAll=false --runInBand
+```
 
-- **React 18**, **TypeScript 4.9**, **CRA (react-scripts)**  
-- **Tailwind CSS 3**, **PostCSS**  
-- **Chart.js 4** (+ plugin annotation)  
-- **react-calendar**, **react-icons**, **react-toastify**  
-- **Capacitor 6** (Android / iOS builds)
+## Fonctionnalités
 
----
-<img width="398" height="359" alt="image" src="https://github.com/user-attachments/assets/5001f8e4-b160-4829-9fc6-007450dc6d44" />
+- Ajout, édition, mise en pause et suppression avec confirmation.
+- Suivi par jour, semaine du lundi au dimanche ou mois, avec dates locales.
+- Recherche, catégories et statistiques sur les habitudes actives filtrées.
+- Export JSON et import avec validation, fusion par identifiant.
+- Protection contre les erreurs de stockage. Une restauration par import conserve les anciennes données illisibles sous la clé locale `habits-recovery-backup` avant remplacement.
+- Rappels facultatifs avec autorisation explicite. L’application doit rester ouverte ; ce ne sont pas des notifications en arrière-plan.
+- Interface responsive, contrôles clavier, focus visible et annonces des actions.
 
-<img width="994" height="523" alt="image" src="https://github.com/user-attachments/assets/325201e1-a28c-4df0-b44c-7ff167c6b56d" />
+## Structure
 
-<img width="298" height="395" alt="image" src="https://github.com/user-attachments/assets/7881319f-681d-4340-afb4-c910cfbd34d9" />
+`src/domain` contient les types, validations et opérations de dates. `src/hooks` gère la persistance et les rappels. `src/components` contient les formulaires, le suivi, les statistiques et les paramètres. Les tokens visuels sont définis dans `src/index.css`.
 
-<img width="913" height="265" alt="image" src="https://github.com/user-attachments/assets/bdf207e4-5bf3-4de3-a790-27a1f4651163" />
+## Limites
 
-<img width="954" height="261" alt="image" src="https://github.com/user-attachments/assets/02c1426d-bc2e-48ab-8c2b-91e210871c91" />
-
+Les données ne sont pas synchronisées entre appareils ou onglets : évitez les modifications simultanées dans plusieurs onglets et exportez une sauvegarde avant de vider le navigateur. Create React App produit encore des avertissements de dépendances anciennes. La configuration Capacitor est conservée ; les builds natifs Android et iOS ne sont pas validés.
